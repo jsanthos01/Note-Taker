@@ -14,23 +14,37 @@ app.use(express.json());
 // to access files in public folder (ACTS AS A MIDDLEWARE)
 app.use(express.static('public'));
 
-//HTML Routes
-app.get("/notes", (req, res) => {
-    res.sendFile(path.join(__dirname, "/public/notes.html"));
-});
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "/public/index.html"));
-});
 
-
+var notesArr = [];
 //API routes
 app.get("/api/notes", (req, res) => {
-    res.send("/db/db.json")
+     let readFileStuff = fs.readFileSync("db/db.json", 'utf-8');
+     readFileStuff = JSON.parse(readFileStuff);
+     console.log(`THIS IS THE NOTE STUFF ${readFileStuff}`);
+     res.json(readFileStuff);
 });
-app.post("/api/notes", (req, res) => {
 
+
+app.post("/api/notes", (req, res) => {
+    var notes = req.body;
+    notesArr.push(notes);
+    console.log(notesArr);
+    fs.writeFileSync("db/db.json", JSON.stringify(notesArr) + "\n"); 
+    
 });
-app.delete("/api/notes", (req, res) => {
+
+app.delete("/api/notes/:id", (req, res) => {
+    let deleteStuff = fs.readFileSync("db/db.json", 'utf-8');
+
+    deleteStuff = JSON.parse(deleteStuff);
+
+    deleteStuff = deleteStuff.filter( (notes) => {
+        return notes.id != req.params.id;
+    });
+
+    deleteStuff = JSON.stringify(deleteStuff);
+    // write the new notes to the file
+    const writeFile = fs.writeFileSync("db/db.json", deleteStuff);
 
 });
 
