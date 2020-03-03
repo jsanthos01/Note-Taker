@@ -26,25 +26,29 @@ app.get("/api/notes", (req, res) => {
 
 
 app.post("/api/notes", (req, res) => {
+
     var notes = req.body;
     notesArr.push(notes);
     console.log(notesArr);
     fs.writeFileSync("db/db.json", JSON.stringify(notesArr) + "\n"); 
+    res.send(JSON.stringify(notesArr));
     
 });
 
 app.delete("/api/notes/:id", (req, res) => {
-    let deleteStuff = fs.readFileSync("db/db.json", 'utf-8');
+    let readFileStuff = fs.readFileSync("db/db.json", 'utf-8');
+    readFileStuff = JSON.parse(readFileStuff);
 
-    deleteStuff = JSON.parse(deleteStuff);
-
-    deleteStuff = deleteStuff.filter( (notes) => {
+    let deleteStuff = readFileStuff.filter( (notes) => {
         return notes.id != req.params.id;
     });
 
+    //changed the array inside the FILE
     deleteStuff = JSON.stringify(deleteStuff);
-    // write the new notes to the file
+
     const writeFile = fs.writeFileSync("db/db.json", deleteStuff);
+    res.send(notesArr);
+
 
 });
 
