@@ -14,7 +14,6 @@ app.use(express.json());
 // to access files in public folder (ACTS AS A MIDDLEWARE)
 app.use(express.static('public'));
 
-
 var notesArr = [];
 //API routes
 app.get("/api/notes", (req, res) => {
@@ -31,11 +30,12 @@ app.post("/api/notes", (req, res) => {
     notesArr.push(notes);
     console.log(notesArr);
     fs.writeFileSync("db/db.json", JSON.stringify(notesArr) + "\n"); 
-    res.send(JSON.stringify(notesArr));
+    res.json(notesArr);
     
 });
 
 app.delete("/api/notes/:id", (req, res) => {
+    notesArr = [];
     let readFileStuff = fs.readFileSync("db/db.json", 'utf-8');
     readFileStuff = JSON.parse(readFileStuff);
 
@@ -47,7 +47,7 @@ app.delete("/api/notes/:id", (req, res) => {
     deleteStuff = JSON.stringify(deleteStuff);
 
     const writeFile = fs.writeFileSync("db/db.json", deleteStuff);
-    res.send(notesArr);
+    res.json(notesArr);
 
 
 });
